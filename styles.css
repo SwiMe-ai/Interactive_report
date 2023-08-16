@@ -1,0 +1,52 @@
+#videos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-color: #f0f0f0;
+  }
+  
+  #main-video-container {
+    width: 50%;
+    position: relative;
+    margin: 0 auto;
+  }
+  
+  #main-video {
+    width: 100%;
+    height: auto;
+  }
+
+  video {
+    width: 100%;
+    max-height:100% ;
+    object-fit: fill;
+  }
+  
+  #other-videos {
+    aspect-ratio: 1;
+    width: 50%; /* Share half the available space */
+    height:auto;
+    max-height: 100%;
+    display: grid;
+    grid-template-rows: repeat(auto-fit,minmax(10px,1fr));
+    justify-content: center; /* Distribute space between subvideos */
+    align-items: center; /*Align subvideos to the left */
+    box-sizing: border-box;
+  }
+
+  .more-than-one{
+    grid-template-columns: repeat(2 , minmax(10px,1fr));
+    
+  }
+
+
+#controls {
+  text-align: left; /* Align the controls to the left */
+  margin-top: 20px;
+  padding-left: 20px; /* Add some left padding for spacing */
+  left: 0; /* Position the controls at the left edge */
+  top: 50%; /* Center the controls vertically */
+  transform: translateY(-50%); /* Adjust vertical position */
+}
+  
