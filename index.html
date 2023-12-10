@@ -3,11 +3,15 @@
 <head>
   <title>Interactive Dashboard</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta charset="UTF-8">
 </head>
 <body>
   <div id="videos">
     <div id="main-video-container">
-      <video id="main-video" src="0.mp4" autoplay controls></video>
+
+      <input type="file" id="main-video-upload" accept="video/*" placeholder="Choose main video">
+      <input type="file" id="other-videos-upload" accept="video/*" multiple placeholder="Choose side plots">
+      <video id="main-video"  autoplay controls></video>
     </div>
     <div id="other-videos"></div>
   </div>
