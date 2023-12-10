@@ -7,22 +7,13 @@ var speed = mainVideo.playbackRate
 
 const videos = [
 {
-        id: "1",
-        src: "1.mp4"
+        id: "body orientation",
+        src: "animation/animation_body_orientation.mp4"
       },
   {
-        id: "2",
-        src: "1.mp4"
+        id: " Pose",
+        src: "animation/animation_pose.mp4"
   },
-  {
-        id: "3",
-        src: "1.mp4"
-  },
-  {
-        id: "4",
-        src: "1.mp4"
-  },
-
 ];
 
 const checkboxes = document.getElementById("checkboxes");
@@ -161,3 +152,54 @@ decreaseSpeedButton.addEventListener("click", function() {
   }
 });
 
+const jumpFrameInput = document.getElementById("jump-frame");
+const jumpButton = document.getElementById("jump");
+
+jumpButton.addEventListener("click", function() {
+  const jumpFrame = parseInt(jumpFrameInput.value, 10);
+
+  if (!isNaN(jumpFrame)) {
+    for (const videoId in videoPlayers) {
+      if (videoPlayers[videoId]) {
+        // Assuming a frame rate of 30 frames per second, you can adjust this value as needed
+        const frameRate = 30;
+        const jumpTime = jumpFrame / frameRate;
+        videoPlayers[videoId].currentTime = jumpTime;
+        pauseVideo(videoId); // Pause the video
+
+      }
+    }
+  }
+});
+
+// Add an event listener to handle Enter key press in the text box
+jumpFrameInput.addEventListener("keyup", function(event) {
+  if (event.key === "Enter") {
+    jumpButton.click(); // Trigger the "jump" button click event
+  }
+});
+
+
+
+const previousFrameButton = document.getElementById("previous-frame");
+const nextFrameButton = document.getElementById("next-frame");
+
+previousFrameButton.addEventListener("click", function() {
+  for (const videoId in videoPlayers) {
+    if (videoPlayers[videoId]) {
+      videoPlayers[videoId].currentTime -= 1 / 30; // Assuming a frame rate of 30 fps
+      pauseVideo(videoId); // Pause the video
+
+    }
+  }
+});
+
+nextFrameButton.addEventListener("click", function() {
+  for (const videoId in videoPlayers) {
+    if (videoPlayers[videoId]) {
+      videoPlayers[videoId].currentTime += 1 / 30; // Assuming a frame rate of 30 fps
+      pauseVideo(videoId); // Pause the video
+
+    }
+  }
+});
