@@ -148,16 +148,15 @@ function checked_video(event) {
     var videoId = event.target.value;
 
     if (event.target.checked) {
-      if (videoId !== mainVideo.id) {
-        createVideoPlayer(videoId);
-        pauseVideo(videoId); // Pause the video initially
-      }
-    } else {
-      otherVideos.removeChild(videoPlayers[videoId]);
-      delete videoPlayers[videoId];
+        videoPlayers[videoId].style.display = "block";
+    }
+    else {
+        videoPlayers[videoId].style.display = "none";
     }
 
+    // Check if there is more than one video selected
     if(otherVideos.children.length > 1) {
+      //
       console.log('event', otherVideos.children)
       otherVideos.classList.add('more-than-one')
     } else otherVideos.classList.remove('more-than-one')
