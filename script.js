@@ -8,7 +8,7 @@ var videoPlayers = {};
 videoPlayers["main_video"] = "";
 var speed = mainVideo.playbackRate
 
-// Upload videos event listeners
+// Upload main videos event listeners
 mainVideoUpload.addEventListener("change", function() {
   if (this.files && this.files[0]) {
     // Start paused
@@ -19,6 +19,7 @@ mainVideoUpload.addEventListener("change", function() {
   }
 });
 
+// Upload sub videos event listeners
 otherVideosUpload.addEventListener("change", function() {
   // Clear existing videos
   otherVideos.innerHTML = "";
@@ -28,8 +29,8 @@ otherVideosUpload.addEventListener("change", function() {
       var url = URL.createObjectURL(this.files[i]);
       var videoId = "video" + i;
       createVideoPlayer(videoId, url);
-      pauseVideo(videoId); // Pause the video initially
     }
+  sync_videos()
   }
 });
 
@@ -41,30 +42,49 @@ function createVideoPlayer(videoId, url) {
   otherVideos.appendChild(videoPlayer);
   videoPlayers[videoId] = videoPlayer;
   changeSpeed(videoId)
-  playVideo(videoId)
+  pauseVideo(videoId); // Pause the video initially
+
+  // Create a new checkbox for this video player
+  var checkbox = createCheckbox(videoId);
+
+  // Create a new label for this checkbox
+  createLabel(videoId);
+
+  // Add an event listener to the checkbox
+  addCheckboxEventListener(checkbox);
 }
 
-
-mainVideo.controls = false;
-
-
-
-
-const sub_videos = [];
-
-// Set the attributes for the file input elements
-sub_videos.forEach(video => {
-  video.input.type = "file";
-  video.input.accept = "video/*";
-  video.input.id = video.id + "-upload";
-  video.input.addEventListener("change", function() {
-    if (this.files && this.files[0]) {
-      var url = URL.createObjectURL(this.files[0]);
-      createVideoPlayer(video.id, url);
-
+function sync_videos() {
+    for (const id in videoPlayers) {
+      goToFirstFrame(id);
+      changeSpeed(id)
+      if (mainVideoPaused) {
+        pauseVideo(id);
+      } else {
+        playVideo(id);
+      }
     }
-  });
-});
+}
+
+function createCheckbox(videoId) {
+  var checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.id = videoId;
+  checkbox.value = videoId;
+  checkbox.checked = true;
+  checkboxes.appendChild(checkbox);
+  return checkbox;
+}
+
+function createLabel(videoId) {
+  var label = document.createElement("label");
+  label.textContent = videoId;
+  checkboxes.appendChild(label);
+}
+
+function addCheckboxEventListener(checkbox) {
+  checkbox.addEventListener("change", checked_video);
+}
 
 // Create checkboxes for each video in the videos array
 for (var i = 0; i < otherVideos.length; i++) {
@@ -82,75 +102,6 @@ for (var i = 0; i < otherVideos.length; i++) {
 
   checkbox.addEventListener("change", checked_video);
 }
-
-
-
-// Main Video Drag and Drop
-const mainVideoContainer = document.getElementById("main-video-container");
-mainVideoContainer.addEventListener("dragover", function(event) {
-  event.preventDefault(); // Prevent default behavior (Prevent file from being opened)
-});
-
-mainVideoContainer.addEventListener("drop", function(event) {
-  event.preventDefault(); // Prevent default behavior (Prevent file from being opened)
-
-  if (event.dataTransfer.items) {
-    // Use DataTransferItemList interface to access the file(s)
-    for (var i = 0; i < event.dataTransfer.items.length; i++) {
-      // If dropped items aren't files, reject them
-      if (event.dataTransfer.items[i].kind === "file") {
-        var file = event.dataTransfer.items[i].getAsFile();
-        var url = URL.createObjectURL(file);
-        mainVideo.src = url;
-        videoPlayers["main_video"] = mainVideo;
-      }
-    }
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    for (var i = 0; i < event.dataTransfer.files.length; i++) {
-      var url = URL.createObjectURL(event.dataTransfer.files[i]);
-      mainVideo.src = url;
-      videoPlayers["main_video"] = mainVideo;
-    }
-  }
-});
-
-// Assuming the container for other videos has an ID "other-videos"
-const otherVideosContainer = document.getElementById("other-videos");
-
-otherVideosContainer.addEventListener("dragover", function(event) {
-  event.preventDefault(); // Prevent default behavior (Prevent file from being opened)
-});
-
-otherVideosContainer.addEventListener("drop", function(event) {
-  event.preventDefault(); // Prevent default behavior (Prevent file from being opened)
-
-  // Clear existing videos
-  otherVideos.innerHTML = "";
-
-  if (event.dataTransfer.items) {
-    // Use DataTransferItemList interface to access the file(s)
-    for (var i = 0; i < event.dataTransfer.items.length; i++) {
-      // If dropped items aren't files, reject them
-      if (event.dataTransfer.items[i].kind === "file") {
-        var file = event.dataTransfer.items[i].getAsFile();
-        var url = URL.createObjectURL(file);
-        var videoId = "video" + i;
-        createVideoPlayer(videoId, url);
-        pauseVideo(videoId); // Pause the video initially
-      }
-    }
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    for (var i = 0; i < event.dataTransfer.files.length; i++) {
-      var url = URL.createObjectURL(event.dataTransfer.files[i]);
-      var videoId = "video" + i;
-      createVideoPlayer(videoId, url);
-      pauseVideo(videoId); // Pause the video initially
-    }
-  }
-});
-
 
 
 // Bottom controls
@@ -195,7 +146,7 @@ function changeSpeed(videoId){
 
 function checked_video(event) {
     var videoId = event.target.value;
-  
+
     if (event.target.checked) {
       if (videoId !== mainVideo.id) {
         createVideoPlayer(videoId);
@@ -210,18 +161,7 @@ function checked_video(event) {
       console.log('event', otherVideos.children)
       otherVideos.classList.add('more-than-one')
     } else otherVideos.classList.remove('more-than-one')
-  
-    var mainVideoPaused = mainVideo.paused;
-  
-    for (const id in videoPlayers) {
-      goToFirstFrame(id);
-      changeSpeed(id)
-      if (mainVideoPaused) {
-        pauseVideo(id);
-      } else {
-        playVideo(id);
-      }
-    }
+   sync_videos()
   }
 
 for (var i = 0; i < videos.length; i++) {
