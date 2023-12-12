@@ -1,6 +1,7 @@
 const mainVideoUpload = document.getElementById("main-video-upload");
 const otherVideosUpload = document.getElementById("other-videos-upload");
 const mainVideo = document.getElementById("main-video");
+
 let otherVideos = document.getElementById("other-videos");
 
 
@@ -23,16 +24,73 @@ mainVideoUpload.addEventListener("change", function() {
 otherVideosUpload.addEventListener("change", function() {
   // Clear existing videos
   otherVideos.innerHTML = "";
+  // Upload the new videos
+  upload_subVideos(this.files);
+}
+);
 
-  if (this.files) {
-    for (let i = 0; i < this.files.length; i++) {
-      var url = URL.createObjectURL(this.files[i]);
-      var videoId = "video" + i;
-      createVideoPlayer(videoId, url);
+const directoryUpload = document.getElementById("directory-upload");
+directoryUpload.addEventListener("change", function() {
+  // Clear existing videos
+  mainVideo.innerHTML = "";
+  otherVideos.innerHTML = "";
+
+  let mainVideoFile;
+  let subVideoFiles = [];
+
+  // Filter the files
+  for (let i = 0; i < this.files.length; i++) {
+    const file = this.files[i];
+    if (file.webkitRelativePath.includes("animations")) {
+      subVideoFiles.push(file);
+    } else if (file.name === "model_full.mp4") {
+      mainVideoFile = file;
     }
-  sync_videos()
+  }
+  // Handle the main video
+  if (mainVideoFile) {
+    var url = URL.createObjectURL(mainVideoFile);
+    mainVideo.src = url;
+    pauseVideo(mainVideo.id); // Pause the video initially
+    videoPlayers["main_video"] = mainVideo;
+  }
+  // Handle the sub videos
+  upload_subVideos(subVideoFiles);
+
+  sync_videos();
+});
+
+const clearButton = document.getElementById("clear");
+
+clearButton.addEventListener("click", function() {
+  // Clear the main video
+  mainVideo.src = "";
+
+  // Clear the sub videos
+  while (otherVideos.firstChild) {
+    otherVideos.removeChild(otherVideos.firstChild);
+  }
+
+  // Clear the video players object
+  videoPlayers = {};
+  videoPlayers["main_video"] = "";
+
+  // Clear the checkboxes
+  while (checkboxes.firstChild) {
+    checkboxes.removeChild(checkboxes.firstChild);
   }
 });
+
+function upload_subVideos(subVideoFiles) {
+    if (subVideoFiles) {
+      for (let i = 0; i < subVideoFiles.length; i++) {
+        var url = URL.createObjectURL(subVideoFiles[i]);
+        var videoName = subVideoFiles[i].name.split('/').pop().split('.')[0].replace(/_/g, ' ');
+        createVideoPlayer(videoName, url);
+      }
+      sync_videos()
+    }
+  }
 
 function createVideoPlayer(videoId, url) {
   var videoPlayer = document.createElement("video");
@@ -58,13 +116,15 @@ function sync_videos() {
     for (const id in videoPlayers) {
       goToFirstFrame(id);
       changeSpeed(id)
-      if (mainVideoPaused) {
+      if (mainVideo.paused) {
         pauseVideo(id);
       } else {
         playVideo(id);
       }
     }
 }
+
+
 
 function createCheckbox(videoId) {
   var checkbox = document.createElement("input");

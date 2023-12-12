@@ -8,9 +8,22 @@
 <body>
   <div id="videos">
     <div id="main-video-container">
+      <label for="directory-upload" class="custom-file-upload">
+    Upload directory
+    <input type="file" id="directory-upload" webkitdirectory directory multiple>
+</label>
 
-      <input type="file" id="main-video-upload" accept="video/*" placeholder="Choose main video">
-      <input type="file" id="other-videos-upload" accept="video/*" multiple placeholder="Choose side plots">
+<label for="main-video-upload" class="custom-file-upload">
+    Upload main video
+    <input type="file" id="main-video-upload" accept="video/*">
+</label>
+
+<label for="other-videos-upload" class="custom-file-upload">
+    Upload animations
+    <input type="file" id="other-videos-upload" accept="video/*" multiple>
+</label>
+      <button id="clear" class="custom-file-upload">Clear</button>
+
       <video id="main-video" controls></video>
     </div>
     <div id="other-videos"></div>

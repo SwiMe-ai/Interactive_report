@@ -49,4 +49,33 @@
   top: 50%; /* Center the controls vertically */
   transform: translateY(-50%); /* Adjust vertical position */
 }
-  
+
+    .custom-file-upload {
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: #fff;
+        border: 1px solid #4CAF50;
+        border-radius: 5px;
+        margin: 10px;
+    }
+
+    .custom-file-upload input {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .custom-file-upload:hover {
+        background-color: #45a049;
+    }
